@@ -1,0 +1,26 @@
+{
+  "name": "document-summarizer-backend",
+  "version": "1.0.0",
+  "description": "AI-Powered Document Summarizer Backend (Express + Gemini)",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js"
+  },
+  "type": "module",
+  "dependencies": {
+    "@google/generative-ai": "^0.7.0",
+    "@mozilla/readability": "^0.6.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsdom": "^22.1.0",
+    "mammoth": "^1.11.0",
+    "multer": "^1.4.5-lts.1",
+    "pdfjs-dist": "^3.11.174",
+    "sanitize-html": "^2.11.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
