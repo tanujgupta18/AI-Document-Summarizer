@@ -3,7 +3,7 @@ import express from "express";
 import dotenv from "dotenv";
 import multer from "multer";
 import fs from "fs/promises";
-import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.js";
+import pdfjsLib from "pdfjs-dist/legacy/build/pdf.js";
 import mammoth from "mammoth";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
@@ -68,7 +68,8 @@ Rules:
 
 // ----------------- extractors -----------------
 async function readFromPDF(filePath) {
-  const data = await fs.readFile(filePath);
+  const buf = await fs.readFile(filePath);
+  const data = new Uint8Array(buf.buffer, buf.byteOffset, buf.byteLength);
   const pdf = await pdfjsLib.getDocument({ data }).promise;
   let fullText = "";
   for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
@@ -76,8 +77,9 @@ async function readFromPDF(filePath) {
     const content = await page.getTextContent();
     fullText += content.items.map((it) => it.str || "").join(" ") + "\n";
   }
-  return fullText;
+  return fullText.trim();
 }
+
 async function readFromDOCX(filePath) {
   const { value } = await mammoth.extractRawText({ path: filePath });
   return value || "";
