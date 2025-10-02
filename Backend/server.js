@@ -1,6 +1,7 @@
 // server.js
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 import multer from "multer";
 import fs from "fs/promises";
 import pdfjsLib from "pdfjs-dist/legacy/build/pdf.js";
@@ -15,6 +16,28 @@ if (!process.env.GEMINI_API_KEY) {
 }
 
 const app = express();
+
+// ---------- CORS config ----------
+const allowedOrigins = [
+  process.env.FRONTEND_ORIGIN,
+  "http://localhost:5173",
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin: (origin, cb) => {
+      if (!origin) return cb(null, true);
+      if (allowedOrigins.includes(origin)) return cb(null, true);
+      return cb(new Error("Not allowed by CORS"));
+    },
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type"],
+    credentials: true,
+  })
+);
+
+app.options("*", cors());
+
 app.use(express.json({ limit: "2mb" }));
 
 // ensure uploads dir exists
