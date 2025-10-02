@@ -1,17 +1,36 @@
-export default function SummaryCard({ summary }) {
+export default function SummaryCard({ summary, originalName, textUsed }) {
   if (!summary) return null;
+
+  const stripExt = (name) => name?.replace(/\.[^/.]+$/, "") || "";
+  const slugify = (s, max = 60) =>
+    (s || "")
+      .normalize("NFKD")
+      .replace(/[^\w\s-]/g, "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .replace(/\s/g, "-")
+      .replace(/-+/g, "-")
+      .slice(0, max) || "summary";
+  const firstLine = (s) => (s || "").split(/\r?\n/).find((l) => l.trim()) || "";
+  const baseName = () =>
+    originalName
+      ? slugify(stripExt(originalName)) // file mode
+      : slugify(
+          firstLine(textUsed) || summary.split(/\s+/).slice(0, 8).join(" ")
+        ); // text mode / fallback
+  const fileName = () => {
+    const ts = new Date().toISOString().slice(0, 16).replace(/[:T]/g, "-");
+    return `summary-${baseName()}-${ts}.txt`;
+  };
 
   const copy = async () => await navigator.clipboard.writeText(summary);
 
   const download = () => {
-    const blob = new Blob([summary], { type: "text/plain" });
+    const blob = new Blob([summary], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `summary-${new Date()
-      .toISOString()
-      .slice(0, 16)
-      .replace(/[:T]/g, "-")}.txt`;
+    a.download = fileName();
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -33,7 +52,7 @@ export default function SummaryCard({ summary }) {
           onClick={download}
           className="rounded-lg border border-zinc-700 px-4 py-2 text-sm text-zinc-200 hover:bg-zinc-800"
         >
-          Download
+          Download TXT
         </button>
       </div>
     </div>

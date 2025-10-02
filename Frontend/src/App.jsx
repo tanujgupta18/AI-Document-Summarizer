@@ -6,7 +6,7 @@ export default function App() {
   const [result, setResult] = useState(null);
 
   return (
-    <div className="min-h-screen w-full bg-[#0a0a0a] ">
+    <div className="min-h-screen w-full bg-[#0a0a0a]">
       <div className="max-w-3xl mx-auto px-4 py-6">
         <h1 className="text-center text-3xl font-semibold tracking-tight text-white">
           AI Document{" "}
@@ -19,12 +19,21 @@ export default function App() {
           <SummarizeForm onResult={setResult} />
         </div>
 
-        {result?.summary && <SummaryCard summary={result.summary} />}
-
-        <p className="mt-4 text-center text-xs text-zinc-400">
-          Tip: Paste text or upload a file, choose style & compression, then hit
-          Summarize.
-        </p>
+        <div className="mt-4">
+          {result?.summary ? (
+            <SummaryCard
+              summary={result.summary}
+              originalName={result.originalName}
+              textUsed={result.textUsed}
+            />
+          ) : (
+            <p className="text-center text-xs text-zinc-400">
+              Tip: Paste text or upload a file, choose style &amp; compression,
+              then hit{" "}
+              <span className="font-medium text-zinc-200">Summarize</span>.
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );
